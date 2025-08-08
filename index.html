@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Monthsarry</title>
+  <style>
+         body {
+       /* Animated gradient background */
+       background: linear-gradient(120deg, #100f0f, #3a0b3a, #100f0f);
+       background-size: 200% 200%;
+       animation: bg-pan 18s ease-in-out infinite;
+       font-family: 'Arial', sans-serif;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       height: 100vh;
+       margin: 0;
+       cursor: none; /* Hide default cursor */
+     }
+    @keyframes bg-pan {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+         .screen {
+       border: 3px solid black;
+       padding: 40px;
+       border-radius: 10px;
+       background-color: white;
+       box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2);
+       width: 500px;
+       text-align: center;
+       display: none;
+       transform: perspective(1000px) rotateX(5deg);
+       transition: transform 0.3s ease, box-shadow 0.3s ease;
+     }
+     .screen:hover {
+       transform: perspective(1000px) rotateX(0deg) translateY(-5px);
+       box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 12px 24px rgba(0,0,0,0.3);
+     }
+
+    .active {
+      display: block;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+         button {
+       padding: 10px 20px;
+       font-size: 18px;
+       cursor: pointer;
+       border: none;
+       border-radius: 5px;
+       background-color: #c178b7;
+       color: white;
+       margin: 10px;
+       transition: 0.3s ease;
+       transform: perspective(500px) rotateY(0deg);
+       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+     }
+
+         button:hover {
+       background-color: #870887;
+       transform: perspective(500px) rotateY(5deg) scale(1.05);
+       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+     }
+     button:active {
+       transform: perspective(500px) rotateY(0deg) scale(0.95);
+       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+     }
+
+    #funnyMessage {
+      font-size: 20px;
+      margin-top: 20px;
+      color: #555;
+    }
+
+    img {
+      width: 200px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+         .option {
+       display: block;
+       margin: 10px 0;
+       padding: 10px;
+       background-color: #e596e7;
+       border: none;
+       border-radius: 5px;
+       font-size: 18px;
+       cursor: pointer;
+       transition: 0.3s;
+       transform: perspective(400px) rotateX(0deg);
+       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+     }
+
+         .option:hover {
+       background-color: #3e254a;
+       transform: perspective(400px) rotateX(3deg) scale(1.02);
+       box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+     }
+
+    #options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+         /* Custom cursor */
+     .custom-cursor {
+       position: fixed;
+       width: 20px;
+       height: 20px;
+       pointer-events: none;
+       z-index: 10004;
+       transition: transform 0.1s ease;
+     }
+     .custom-cursor svg {
+       width: 100%;
+       height: 100%;
+       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+     }
+     
+     /* Music toggle */
+     #musicToggle {
+       position: fixed;
+       top: 12px;
+       right: 12px;
+       z-index: 10001;
+       width: 44px;
+       height: 44px;
+       border-radius: 50%;
+       background-color: #c178b7;
+       color: #fff;
+       border: none;
+       font-size: 20px;
+       cursor: pointer;
+       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+       line-height: 44px;
+       text-align: center;
+       transform: perspective(300px) rotateY(0deg);
+       transition: all 0.3s ease;
+     }
+         #musicToggle:hover {
+       background-color: #870887;
+       transform: perspective(300px) rotateY(10deg) scale(1.1);
+       box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+     }
+
+    /* HUD: Progress + Love Score */
+    #hud {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      right: 68px; /* leave space for music btn */
+      z-index: 10001;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      color: #ffe0f4;
+      pointer-events: none;
+    }
+    #hud span {
+      background: rgba(193,120,183,0.25);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 10px;
+      border-radius: 999px;
+      pointer-events: auto;
+    }
+
+    /* Easter Egg Overlay */
+    .egg-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.6);
+      z-index: 10002;
+      padding: 20px;
+    }
+    .egg-card {
+      background: #fff;
+      color: #3a2c3f;
+      width: min(520px, 90vw);
+      padding: 24px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .egg-card h2 { margin-top: 0; }
+    .egg-card button {
+      margin-top: 14px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #c178b7;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .egg-card button:hover { background: #870887; }
+
+  /* Shake animation for wrong answer */
+  .shake {
+    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  }
+  @keyframes shake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+
+    .option {
+      display: inline-block;
+      min-width: 100px;
+      margin: 0;
+    }
+
+    #finalMessage {
+      font-size: 22px;
+      color: #4e0c49;
+      margin-top: 20px;
+    }
+    /* Glitter styles */
+    .glitter-container {
+      pointer-events: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 9999;
+      overflow: hidden;
+    }
+    .glitter {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff7b2 60%, #ffb6e6 100%);
+      opacity: 0.8;
+      animation: glitter-move 2s linear infinite;
+    }
+    @keyframes glitter-move {
+      0% { transform: scale(1) translateY(0); opacity: 0.8; }
+      50% { transform: scale(1.3) translateY(-20px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+
+     <!-- Custom Cursor -->
+   <div class="custom-cursor" id="customCursor">
+     <svg viewBox="0 0 24 24" fill="#ff6aa2">
+       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+     </svg>
+   </div>
+   <!-- Glitter Overlay -->
+   <div class="glitter-container" id="glitterContainer"></div>
+      <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:10000;"></canvas>
+   <!-- Background Music and Toggle -->
+   <audio id="bgm" src="music.mp3.mp3" loop preload="auto"></audio>
+   <audio id="engkSound" src="engk.mp3.mp3" preload="auto"></audio>
+   <audio id="correctSound" src="correct.mp3.mp3" preload="auto"></audio>
+   <button id="musicToggle" onclick="toggleMusic()" title="Music">🔇</button>
+   <!-- Compliment Toast -->
+   <div id="compliment" aria-live="polite" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(193,120,183,0.9);color:#fff;padding:12px 20px;border-radius:8px;font-weight:600;z-index:10003;opacity:0;transition:opacity 0.3s ease;pointer-events:none;"></div>
+  <!-- HUD -->
+  <div id="hud">
+    <span id="progress">Question 1/10</span>
+    <span id="score">Love Score: 0</span>
+    <span id="loveMeterWrap" title="Love Meter">
+      <svg id="loveMeterSvg" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <clipPath id="heartClip">
+            <path d="M50 88 L20 58 C6 44 6 22 26 16 C38 12 46 18 50 26 C54 18 62 12 74 16 C94 22 94 44 80 58 Z"></path>
+          </clipPath>
+          <linearGradient id="loveGrad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#ff6aa2"/>
+            <stop offset="100%" stop-color="#ffc0e1"/>
+          </linearGradient>
+        </defs>
+        <path id="loveOutline" d="M50 88 L20 58 C6 44 6 22 26 16 C38 12 46 18 50 26 C54 18 62 12 74 16 C94 22 94 44 80 58 Z"></path>
+        <path id="loveBg" d="M50 88 L20 58 C6 44 6 22 26 16 C38 12 46 18 50 26 C54 18 62 12 74 16 C94 22 94 44 80 58 Z"></path>
+        <g clip-path="url(#heartClip)">
+          <rect id="loveFill" x="0" y="0" width="100" height="100" fill="url(#loveGrad)"></rect>
+        </g>
+      </svg>
+    </span>
+  </div>
+  <!-- Easter Egg Overlay -->
+  <div id="eggOverlay" class="egg-overlay" aria-hidden="true">
+    <div class="egg-card">
+      <h2>Secret Unlocked! 💖</h2>
+      <p>Super special love boost! Keep going, mahal!</p>
+      <button onclick="closeEgg()">Back</button>
+    </div>
+  </div>
+  <!-- Welcome Screen -->
+  <div class="screen active" id="welcomeScreen">
+    <h1>Welcome!!!!!</h1>
+    <button onclick="goToReady()">Click here</button>
+  </div>
+
+  <!-- Are You Ready Screen -->
+  <div class="screen" id="readyScreen">
+    <h1>Are you ready?</h1>
+    <button onclick="startQuiz()">Yes</button>
+    <button onclick="notReady()">No</button>
+    <p id="funnyMessage"></p>
+  </div>
+
+     <!-- Quiz Screen -->
+   <div class="screen" id="quizScreen">
+     <div class="question" id="questionText"></div>
+     <div id="options"></div>
+   </div>
+
+  <!-- Final Message Screen -->
+  <div class="screen" id="finalScreen">
+    <div id="finalMessage">
+      <h2 style="color:#ffb700;font-size:32px;margin-bottom:10px;">🎉 Congratulations! 🎉</h2>
+      <br>Happy First Monthsary, Mahal! 
+
+Can you believe it’s already been a month? Time flies so fast when I’m with you—or even just thinking of you. Every single day with you has been special, full of little moments that make my heart feel full.
+
+Thank you for staying, for choosing me, and for making this past month feel like a dream I never want to wake up from. You’re the calm to my chaos, the peace in my overthinking, and the smile behind my quiet days.
+
+I know we still have so much to discover, to learn, and to grow into—but I’m excited to go through it all with you, slowly, gently, and together. You make loving so easy, so warm, and so genuine.
+
+Here’s to one beautiful month down, and many more ahead. I’ll keep loving you in all ways—on your best days and even more on your hardest.
+
+I love you, mahal. Always and in all ways. Happy Monthsary<br>
+
+      <p id="loveScore" style="margin-top:16px;color:#c178b7;font-weight:bold;"></p>
+
+    </div>
+  </div>
+
+  <script>
+    // Screens
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const readyScreen = document.getElementById('readyScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const finalScreen = document.getElementById('finalScreen');
+    // HUD refs
+    const hudProgress = document.getElementById('progress');
+    const hudScore = document.getElementById('score');
+    let score = 0;
+    // Music
+    const bgm = document.getElementById('bgm');
+    let hasStartedMusic = false;
+    function updateMusicToggle() {
+      const btn = document.getElementById('musicToggle');
+      if (!btn) return;
+      btn.textContent = bgm.paused ? '🔇' : '🔊';
+    }
+    function ensureMusic() {
+      if (hasStartedMusic) return;
+      bgm.play().then(() => {
+        hasStartedMusic = true;
+        updateMusicToggle();
+      }).catch(() => {
+        // Ignore play rejection; user can press the toggle
+      });
+    }
+    function toggleMusic() {
+      if (bgm.paused) {
+        bgm.play().then(updateMusicToggle).catch(() => {});
+      } else {
+        bgm.pause();
+        updateMusicToggle();
+      }
+    }
+    // Confetti
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    let confettiActive = false;
+    function resizeConfettiCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeConfettiCanvas);
+    resizeConfettiCanvas();
+
+    function launchConfetti() {
+      if (confettiActive) return;
+      confettiActive = true;
+      const ctx = confettiCanvas.getContext('2d');
+      const confettiCount = 120;
+      const confetti = [];
+      for (let i = 0; i < confettiCount; i++) {
+        confetti.push({
+          x: Math.random() * confettiCanvas.width,
+          y: Math.random() * -confettiCanvas.height,
+          r: 6 + Math.random() * 6,
+          d: Math.random() * confettiCanvas.height,
+          color: `hsl(${Math.random()*360},90%,70%)`,
+          tilt: Math.random() * 10,
+          tiltAngle: Math.random() * Math.PI,
+          speed: 2 + Math.random() * 3
+        });
+      }
+      let frame = 0;
+      function drawConfetti() {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        confetti.forEach(c => {
+          ctx.beginPath();
+          ctx.ellipse(c.x, c.y, c.r, c.r/2, c.tiltAngle, 0, 2 * Math.PI);
+          ctx.fillStyle = c.color;
+          ctx.fill();
+        });
+      }
+      function updateConfetti() {
+        confetti.forEach(c => {
+          c.y += c.speed;
+          c.x += Math.sin(frame/10 + c.d) * 2;
+          c.tiltAngle += 0.1;
+        });
+      }
+      function animate() {
+        frame++;
+        updateConfetti();
+        drawConfetti();
+        if (frame < 120) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+          confettiActive = false;
+        }
+      }
+      animate();
+    }
+    // Glitter effect
+    const glitterContainer = document.getElementById('glitterContainer');
+    function createGlitter() {
+      const glitter = document.createElement('div');
+      glitter.className = 'glitter';
+      // Random position
+      glitter.style.left = Math.random() * window.innerWidth + 'px';
+      glitter.style.top = Math.random() * window.innerHeight + 'px';
+      // Random animation duration
+      glitter.style.animationDuration = (1.5 + Math.random()) + 's';
+      // Random size
+      const size = 4 + Math.random() * 8;
+      glitter.style.width = size + 'px';
+      glitter.style.height = size + 'px';
+      // Random color
+      const colors = ['#fff7b2', '#ffb6e6', '#f7cfff', '#ffe6f7', '#faffd8'];
+      glitter.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]} 60%, #fff 100%)`;
+      glitterContainer.appendChild(glitter);
+      setTimeout(() => {
+        glitter.remove();
+      }, 2000);
+    }
+    setInterval(createGlitter, 120);
+
+    function goToReady() {
+      welcomeScreen.classList.remove('active');
+      readyScreen.classList.add('active');
+      ensureMusic();
+    }
+
+    function notReady() {
+      document.getElementById('funnyMessage').innerText = "Okay lang 🥺 I'll wait for you...";
+      ensureMusic();
+    }
+
+    function startQuiz() {
+      readyScreen.classList.remove('active');
+      quizScreen.classList.add('active');
+      showQuestion();
+      ensureMusic();
+    }
+
+    const questions = [
+      {
+        q: "Anong favorite color ko?",
+        options: ["Red", "Blue", "Black", "Green"],
+        answer: "Black"
+      },
+      {
+        q: "Anong fav ko na tawag mo sa'kin?",
+        options: ["Hon", "Mahal", "Love", "Baby"],
+        answer: "Hon"
+      },
+      {
+        q: "Who's my bias in BINI?",
+        options: ["Colet", "Gwen", "Stacey", "Aiah"],
+        answer: "Stacey"
+      },
+      {
+        q: "My fav ghibli movie",
+        options: ["Howl's moving castle", "Princess mononoke", "My neighbour totoro", "Spirited away"],
+        answer: "Spirited away"
+      },
+      {
+        q: "Favorite kong ulam?",
+        options: ["Adobo", "Sinigang", "Tocino", "Fried chicken"],
+        answer: "Sinigang"
+      },
+      {
+        q: "Anong oras tayo usually natutulog?",
+        options: ["8 PM", "9 PM", "11 PM", "12 AM"],
+        answer: "11 PM"
+      },
+      {
+        q: "Sino unang nagsabi na may nararamdaman pa rin siya?",
+        options: ["Ako", "Ikaw"],
+        answer: "Ako"
+      },
+      {
+        q: "Anong madalas kong gawin kapag nang-aasar ako?",
+        options: ["AHAHAHAHAHAH", "nyenyenye", "ha?", "Mariang karamot"],
+        answer: "Mariang karamot"
+      },
+      {
+        q: "Anong unang tawag ko sa'yo?",
+        options: ["Bebe", "Vayne", "Dibina", "Adi"],
+        answer: "Vayne"
+      },
+      {
+        q: "Kailan ang exact date ng monthsarry natin?",
+        options: ["August 8", "August 11", "June 11", "July 11"],
+        answer: "August 11"
+      }
+    ];
+
+    let currentQuestion = 0;
+    function updateHud() {
+      if (hudProgress) hudProgress.textContent = `Question ${Math.min(currentQuestion + 1, questions.length)}/${questions.length}`;
+      if (hudScore) hudScore.textContent = `Love Score: ${score}`;
+      const loveFill = document.getElementById('loveFill');
+      const percent = questions.length ? Math.max(0, Math.min(1, score / questions.length)) : 0;
+      if (loveFill) {
+        loveFill.style.transform = `scaleY(${percent})`;
+      }
+    }
+    updateHud();
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById("questionText").innerText = q.q;
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.innerText = option;
+        btn.className = "option";
+        btn.onclick = () => checkAnswer(option, btn);
+        optionsDiv.appendChild(btn);
+      });
+      updateHud();
+    }
+
+    function checkAnswer(selected, btnEl) {
+      const correct = questions[currentQuestion].answer;
+             if (selected === correct) {
+         score++;
+         // Play correct sound
+         const correctSound = document.getElementById('correctSound');
+         if (correctSound) {
+           correctSound.currentTime = 0;
+           correctSound.play().catch(() => {});
+         }
+         // Score pop
+         if (hudScore) { hudScore.classList.remove('pop'); void hudScore.offsetWidth; hudScore.classList.add('pop'); }
+         // Show compliment toast
+         const messages = [
+           "galing mo naman boss",
+           "wow, alam niya",
+           "nakkksss naman",
+           "I love you",
+           "awit galing ng bebe na yan",
+           "Nakaka-in love sa galing"
+         ];
+         const msg = messages[Math.floor(Math.random() * messages.length)];
+         const comp = document.getElementById('compliment');
+         if (comp) {
+           comp.textContent = msg;
+           comp.style.opacity = '1';
+           setTimeout(() => {
+             comp.style.opacity = '0';
+           }, 1400);
+         }
+         // Button feedback
+         if (btnEl) {
+           btnEl.classList.add('correct');
+           setTimeout(() => btnEl.classList.remove('correct'), 600);
+         }
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          showQuestion();
+        } else {
+          quizScreen.classList.remove('active');
+          finalScreen.classList.add('active');
+          launchConfetti();
+          const lovePercent = Math.round((score / questions.length) * 100);
+          const loveScoreEl = document.getElementById('loveScore');
+          if (loveScoreEl) {
+            loveScoreEl.textContent = `Your Love Score: ${score}/${questions.length} (${lovePercent}%) 💞`;
+          }
+        }
+      } else {
+        // Shake animation
+        quizScreen.classList.add('shake');
+        setTimeout(() => quizScreen.classList.remove('shake'), 400);
+        // Play engk sound
+        const engkSound = document.getElementById('engkSound');
+        if (engkSound) {
+          engkSound.currentTime = 0;
+          engkSound.play().catch(() => {});
+        }
+        // Optionally show wrong answer image if present
+        const wrongImg = document.getElementById('wrongImg');
+        if (wrongImg) {
+          wrongImg.style.display = 'block';
+          setTimeout(() => {
+            wrongImg.style.display = 'none';
+          }, 1200);
+        }
+        alert("ENGKKKKKKKK");
+        if (navigator.vibrate) { try { navigator.vibrate(150); } catch(e){} }
+      }
+      updateHud();
+    }
+
+    // Easter Egg (Konami Code)
+    const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a','Enter'];
+    const inputBuffer = [];
+    function normalizedKey(k) { return k.length === 1 ? k.toLowerCase() : k; }
+    function showEasterEgg() {
+      const overlay = document.getElementById('eggOverlay');
+      if (!overlay) return;
+      overlay.style.display = 'flex';
+      overlay.setAttribute('aria-hidden', 'false');
+      launchConfetti();
+    }
+    function closeEgg() {
+      const overlay = document.getElementById('eggOverlay');
+      if (!overlay) return;
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+         // Custom cursor movement
+     const customCursor = document.getElementById('customCursor');
+     document.addEventListener('mousemove', (e) => {
+       if (customCursor) {
+         customCursor.style.left = e.clientX - 10 + 'px';
+         customCursor.style.top = e.clientY - 10 + 'px';
+       }
+     });
+     
+     // Cursor effects on hoverable elements
+     document.addEventListener('mouseover', (e) => {
+       if (e.target.matches('button, .option') && customCursor) {
+         customCursor.style.transform = 'scale(1.5) rotate(15deg)';
+       }
+     });
+     
+     document.addEventListener('mouseout', (e) => {
+       if (e.target.matches('button, .option') && customCursor) {
+         customCursor.style.transform = 'scale(1) rotate(0deg)';
+       }
+     });
+     
+     window.addEventListener('keydown', (e) => {
+       inputBuffer.push(normalizedKey(e.key));
+       if (inputBuffer.length > konami.length) inputBuffer.shift();
+       if (konami.every((k, i) => inputBuffer[i] === k)) {
+         showEasterEgg();
+       }
+     });
+  </script>
+</body>
+</html>
